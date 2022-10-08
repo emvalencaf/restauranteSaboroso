@@ -1,9 +1,7 @@
 var express = require('express');
-var admin = require('../inc/admin.mysql');
+const admin = require('../inc/admin.mysql');
 var router = express.Router();
 var users = require('../inc/users');
-var menus = require('../inc/menus.mysql')
-
 
 router.use(function(req, res, next){
     
@@ -106,32 +104,7 @@ router.get('/emails', function(req, res, next){
 
 router.get('/menus', function(req, res, next){
 
-    menus.getMenus()
-        .then(data => {
-
-
-            res.render('admin/menus', admin.getParams(req, {
-                data
-            }));
-
-        })
-        .catch(err =>{
-
-            console.error(err)
-            
-        });
-
-});
-
-router.post('/menus', function(req, res, next){
-    console.log(req.files)
-    menus.save(req.fields, req.files)
-        .then(results => {
-            console.log(results)
-        })
-        .catch(err => {
-            console.error(err)
-        })
+    res.render('admin/menus', admin.getParams(req));
 
 });
 
