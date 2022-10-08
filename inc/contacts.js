@@ -11,7 +11,7 @@ module.exports = {
             body: req.body,
             error,
             sucess
-        })
+        });
 
     },
 
@@ -30,13 +30,13 @@ module.exports = {
 
                 if(err) return reject(err)
 
-                resolve(results)
+                resolve(results);
 
-            })
+            });
 
-        })
+        });
 
     }
 
 
-}
+};

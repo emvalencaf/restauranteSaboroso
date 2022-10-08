@@ -26,13 +26,13 @@ module.exports = {
                             tb_users) AS nrusers;
             `, (err, results) => {
 
-                if(err) reject(err)
+                if(err) return reject(err);
 
-                resolve(results[0])
+                resolve(results[0]);
 
-            })
+            });
 
-        })
+        });
 
     },
 
@@ -41,7 +41,7 @@ module.exports = {
         return Object.assign({}, {
             menus: req.menus,
             user: req.session.user
-        }, params)
+        }, params);
 
     },
 
@@ -84,13 +84,13 @@ module.exports = {
                 icon:"envelope",
                 active: false
             }
-        ]
+        ];
 
         menus.map(menu => {
 
-            if(menu.href === `/admin${req.url}`) menu.active = true
+            if(menu.href === `/admin${req.url}`) menu.active = true;
             
-        })
+        });
 
         return menus
     }

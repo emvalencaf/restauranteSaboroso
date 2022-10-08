@@ -10,7 +10,7 @@ module.exports = {
             body: req.body,
             error,
             sucess
-          })
+          });
 
     },
 
@@ -19,9 +19,9 @@ module.exports = {
         return new Promise((resolve, reject) => {
 
 
-            const date = fields.date.split('/')
+            const date = fields.date.split('/');
 
-            fields.date = `${date[2]}-${date[1]}-${date[0]}`
+            fields.date = `${date[2]}-${date[1]}-${date[0]}`;
 
             connect.query(`
                 INSERT INTO tb_reservations (name, email, people, date, time)
@@ -34,15 +34,15 @@ module.exports = {
                 fields.time
             ], (err, results) => {
     
-                if(err) return reject(err)
+                if(err) return reject(err);
 
-                resolve(results)
+                resolve(results);
     
-            })
+            });
 
 
-        })
+        });
 
 
     }
-}
+};

@@ -6,7 +6,7 @@ module.exports = {
         res.render('admin/login',{
             body: req.body,
             error
-        })
+        });
 
     },
 
@@ -21,21 +21,21 @@ module.exports = {
                 email
             ], (err, results)=>{
 
-                if(err) reject(err)
+                if(err) return reject(err);
 
-                if(!results.length > 0) reject({
+                if(!results.length > 0) return reject({
                     message:"usuário ou senha incorretos"
-                })
+                });
 
-                let row = results[0]
-                console.log(results)
-                if(row.password !== password) reject({message:'senha incorreta'})
+                let row = results[0];
+                console.log(results);
+                if(row.password !== password) reject({message:'senha incorreta'});
 
-                resolve(row)
-            })
+                resolve(row);
+            });
 
-        })
+        });
 
     }
 
-}
+};
