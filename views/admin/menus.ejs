@@ -62,7 +62,7 @@
     <div class="modal fade" id="modal-create">
       <div class="modal-dialog">
         <div class="modal-content" style="border-top: 3px solid #00a65a;">
-          <form method="post">
+          <form method="post" acion="/admin/menus">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -102,7 +102,7 @@
     <div class="modal fade" id="modal-update">
       <div class="modal-dialog">
         <div class="modal-content" style="border-top: 3px solid #00c0ef;">
-          <form method="post">
+          <form method="post" action="/admin/menus">
             <input type="hidden" name="id">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -145,6 +145,7 @@
 
 
 <script src="/js/hcode-filereader.js"></script>
+<script src="/js/hcode-formsave.js"></script>
 <script>
   
   new HcodeFileReader("#modal-create [type=file]","#modal-create img")
@@ -153,32 +154,59 @@
 
   const formCreate = document.querySelector("#modal-create form");
 
-  formCreate.addEventListener('submit', e =>{
+  formCreate.save()
+    .then(json => {
 
-    e.preventDefault();
-    
-    const formCreateData = new FormData(formCreate);
+      window.location.reload();
 
-    fetch("/admin/menus", {
-      method: 'POST',
-      body: formCreateData
     })
-      .then(response => response.json())
-      .then(json => {
-        //console.log(json)
-        window.location.reload();
+    .catch(err => {
 
+      console.error(err);
+
+    });
+
+  const formUpdate = document.querySelector('#modal-update form');
+
+  formUpdate.save()
+    .then(json => {
+
+      window.location.reload();
+
+    })
+    .catch(err => {
+
+      console.error(err);
+
+    });
+  
+  const btnsDelete = [...document.querySelectorAll('.btn-delete')];
+
+  btnsDelete.forEach(btn => {
+
+    btn.addEventListener('click', e => {
+
+      
+      const tr = e.composedPath().find(el => el.tagName.toUpperCase() == 'TR');
+      
+      const data = JSON.parse(tr.dataset.row);
+      
+      if(!confirm(`Deseja realmente excluir o prato ${data.title}`)) return
+
+      fetch(`/admin/menus/${data.id}`, {
+        method: 'DELETE'
       })
-      .catch(err => {
+        .then(response => response.json())
+        .then(json => {
 
-        console.error(err);
+          window.location.reload();
 
-      });
+        });
+
+    });
 
   });
 
-  const formUpdate = document.querySelector('#modal-update form');
-  
   const btns = [...document.querySelectorAll('.btn-update')];
   btns.forEach(btn =>{
 
