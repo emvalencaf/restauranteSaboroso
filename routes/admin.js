@@ -2,7 +2,11 @@ var express = require('express');
 var admin = require('../inc/admin.mysql');
 var router = express.Router();
 var users = require('../inc/users');
-var menus = require('../inc/menus.mysql')
+var menus = require('../inc/menus.mysql');
+var reservations = require('../inc/reservations');
+var moment = require('moment');
+
+moment.locale('pt-BR');
 
 router.use(function(req, res, next){
     
@@ -150,9 +154,48 @@ router.delete('/menus/:id', function(req, res, next){
 
 router.get('/reservations', function(req, res, next){
 
-    res.render('admin/reservations', admin.getParams(req, {
-        date: {}
-    }));
+    
+    reservations.getReservations()
+    .then(data => {
+        
+        res.render('admin/reservations', admin.getParams(req, {
+            data,
+            moment
+        }));
+        
+        })
+        .catch(err => {
+
+            console.error(err)
+
+        })
+
+
+});
+
+router.post('/reservations', function(req, res, next){
+    console.log(req.fields)
+    reservations.save(req.fields)
+        .then(results => res.send(results))
+        .catch(err => {
+            console.error(err);
+        });
+
+});
+
+router.delete('/reservations/:id', function(req, res, next){
+
+    reservations.delete(req.params.id)
+        .then(results => {
+
+            res.send(results)
+
+        })
+        .catch(err => {
+
+            res.send(err)
+
+        })
 
 });
 

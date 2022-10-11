@@ -25,7 +25,7 @@ app.use(function(req, res, next){
 
   console.log('REQ URL', req.url)
 
-  if(['/admin/menus'].indexOf(req.url) === -1) return next();
+  if(['/admin/menus','/admin/reservations'].indexOf(req.url) === -1) return next();
 
   var form = new formidable.IncomingForm({
     uploadDir: path.join(__dirname, '/public/images'),

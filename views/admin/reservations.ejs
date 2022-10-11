@@ -32,7 +32,7 @@
                     <div class="input-group-addon">
                       <i class="fa fa-calendar"></i>
                     </div>
-                    <input type="date" name="start" class="form-control unstyled" value="<%= date.start %>">
+                    <input type="date" name="start" class="form-control unstyled" value="<%= data.start %>">
                   </div>
                 </div>
                 <div class="form-group" style="width: 182px; float: left">
@@ -40,7 +40,7 @@
                     <div class="input-group-addon">
                       até
                     </div>
-                    <input type="date" name="end" class="form-control unstyled" value="<%= date.end %>">
+                    <input type="date" name="end" class="form-control unstyled" value="<%= data.end %>">
                   </div>
                 </div>
                 <div class="form-group" style="float: left; margin-left: 7px;">
@@ -64,17 +64,19 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1.</td>
-                  <td>Hcode</td>
-                  <td>contato@hcode.com.br</td>
-                  <td>2</td>
-                  <td>1/1/2019</td>
-                  <td>10:30</td>
-                  <td><button type="button" class="btn btn-xs btn-info btn-update" data-toggle="modal" data-target="#modal-update"><i
+                <% data.forEach(row => { %>
+                <tr data-row="<%= JSON.stringify(row) %>">
+                  <td><%= row.id %></td>
+                  <td><%= row.name %></td>
+                  <td><%= row.email %></td>
+                  <td><%= row.people %></td>
+                  <td><%= moment(row.date).format("DD [de] MMMM [de] YYYY") %></td>
+                  <td><%= row.time %></td>
+                  <td><button type="button" class="btn btn-xs btn-info btn-update"><i
                         class="fa fa-pencil"></i> Editar</button>&nbsp;<button type="button" class="btn btn-xs btn-danger btn-delete"><i
                         class="fa fa-trash"></i> Excluir</button></td>
                 </tr>
+                <% }); %>
               </tbody>
             </table>
           </div>
@@ -99,7 +101,7 @@
     <div class="modal fade" id="modal-create">
       <div class="modal-dialog">
         <div class="modal-content" style="border-top: 3px solid #00a65a;">
-          <form method="post">
+          <form method="post" action="/admin/reservations">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -199,6 +201,97 @@
 
     <!-- Main Footer -->
 <%- include("inc/footer") -%>
+
+
+<script src="/js/hcode-formsave.js"></script>
+<script src="/js/moment.min.js"></script>
+<script>
+  const formCreate = document.querySelector("#modal-create form");
+
+  formCreate.save()
+    .then(json => {
+
+      window.location.reload();
+
+    })
+    .catch(err => {
+
+      console.error(err);
+
+    });
+
+  const formUpdate = document.querySelector('#modal-update form');
+
+  formUpdate.save()
+    .then(json => {
+
+      window.location.reload();
+
+    })
+    .catch(err => {
+
+      console.error(err);
+
+    });
+
+
+    const btnsDelete = [...document.querySelectorAll('.btn-delete')];
+
+    btnsDelete.forEach(btn => {
+
+btn.addEventListener('click', e => {
+
+  
+  const tr = e.composedPath().find(el => el.tagName.toUpperCase() == 'TR');
+  
+  const data = JSON.parse(tr.dataset.row);
+  
+  if(!confirm(`Deseja realmente excluir a reserva de ${data.name}?`)) return
+
+  fetch(`/admin/reservations/${data.id}`, {
+    method: 'DELETE'
+  })
+    .then(response => response.json())
+    .then(json => {
+
+      window.location.reload();
+
+    });
+
+});
+
+});
+
+    const btns = [...document.querySelectorAll('.btn-update')];
+  btns.forEach(btn =>{
+
+    btn.addEventListener('click', e => {
+
+      const tr = e.composedPath().find(el => el.tagName.toUpperCase() == 'TR');
+
+      const data = JSON.parse(tr.dataset.row);
+
+      for(let name in data){
+        
+        const input = formUpdate.querySelector(`[name=${name}]`)
+        
+        switch(name){
+          case 'date':
+            input.value = moment(data[name]).format('YYYY-MM-DD')
+            break;
+          default:
+            if(input) input.value = data[name]
+        };
+
+      };
+
+      $('#modal-update').modal('show');
+
+    });
+
+  });
+
+</script>
 
 </body>
 
