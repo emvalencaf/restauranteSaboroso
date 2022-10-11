@@ -40,7 +40,16 @@ class HcodeGrid{
             formUpdate: '#modal-update form',
             btnUpdate: '.btn-update',
             btnDelete: '.btn-delete',
+            onUpdateLoad: (form, name, data) => {
+
+                const input = form.querySelector('[name='+ name + ']');
+
+                if(input) input.value = data[name];
+
+            }
         }, configs);
+
+        console.log(this.options)
 
         this.initForms();
         this.initBtns();
@@ -106,10 +115,12 @@ class HcodeGrid{
         btnsDelete.forEach(btn => {
       
             btn.addEventListener('click', e => {
-      
+                debugger
+                
                 this.fireEvent('beforeDeleteClick')
         
                 const data = this.getTrData(e);
+
 
                 if(!confirm(eval('`' + this.options.deleteMsg + '`'))) return
       
