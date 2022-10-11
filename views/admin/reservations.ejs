@@ -205,90 +205,12 @@
 
 <script src="/js/hcode-formsave.js"></script>
 <script src="/js/moment.min.js"></script>
+<script src="/js/hdcode-grid.js"></script>
 <script>
-  const formCreate = document.querySelector("#modal-create form");
 
-  formCreate.save()
-    .then(json => {
-
-      window.location.reload();
-
-    })
-    .catch(err => {
-
-      console.error(err);
-
-    });
-
-  const formUpdate = document.querySelector('#modal-update form');
-
-  formUpdate.save()
-    .then(json => {
-
-      window.location.reload();
-
-    })
-    .catch(err => {
-
-      console.error(err);
-
-    });
-
-
-    const btnsDelete = [...document.querySelectorAll('.btn-delete')];
-
-    btnsDelete.forEach(btn => {
-
-btn.addEventListener('click', e => {
-
-  
-  const tr = e.composedPath().find(el => el.tagName.toUpperCase() == 'TR');
-  
-  const data = JSON.parse(tr.dataset.row);
-  
-  if(!confirm(`Deseja realmente excluir a reserva de ${data.name}?`)) return
-
-  fetch(`/admin/reservations/${data.id}`, {
-    method: 'DELETE'
-  })
-    .then(response => response.json())
-    .then(json => {
-
-      window.location.reload();
-
-    });
-
-});
-
-});
-
-    const btns = [...document.querySelectorAll('.btn-update')];
-  btns.forEach(btn =>{
-
-    btn.addEventListener('click', e => {
-
-      const tr = e.composedPath().find(el => el.tagName.toUpperCase() == 'TR');
-
-      const data = JSON.parse(tr.dataset.row);
-
-      for(let name in data){
-        
-        const input = formUpdate.querySelector(`[name=${name}]`)
-        
-        switch(name){
-          case 'date':
-            input.value = moment(data[name]).format('YYYY-MM-DD')
-            break;
-          default:
-            if(input) input.value = data[name]
-        };
-
-      };
-
-      $('#modal-update').modal('show');
-
-    });
-
+  new HcodeGrid({
+    deleteURL: '/admin/reservations/${data.id}',
+    deleteMsg: 'Deseja realmente excluir a reserva de ${data.name}?'
   });
 
 </script>
