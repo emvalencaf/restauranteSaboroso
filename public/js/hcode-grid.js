@@ -60,7 +60,7 @@ class HcodeGrid{
 
         this.formCreate = document.querySelector(this.options.formCreate);
 
-        this.formCreate.save({
+        if(this.formCreate) this.formCreate.save({
             sucess: () => {
                 
                 this.fireEvent('afterFormCreated');
@@ -73,7 +73,7 @@ class HcodeGrid{
       
         this.formUpdate = document.querySelector(this.options.formUpdate);
       
-        this.formUpdate.save({
+        if(this.formUpdate) this.formUpdate.save({
             sucess: () => {
 
                 this.fireEvent('afterFormUpdated');
@@ -126,6 +126,7 @@ class HcodeGrid{
         
         const data = this.getTrData(e);
 
+        console.log(data);
 
         if(!confirm(eval('`' + this.options.deleteMsg + '`'))) return
 
@@ -134,7 +135,7 @@ class HcodeGrid{
         })
             .then(response => response.json())
             .then(json => {
-                
+                console.log(json);
                 this.fireEvent('afterDeleteClick');
 
             });

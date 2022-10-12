@@ -1,4 +1,4 @@
-const connection = require("./db.mysql")
+const connection = require("./db.mysql");
 
 module.exports = {
     render(req, res, error){
@@ -83,9 +83,9 @@ module.exports = {
                 query =`
                     INSERT INTO tb_users (name, email, password)
                     VALUES (?, ?, ?)
-                `
+                `;
 
-                params.push(fields.password)
+                params.push(fields.password);
 
             };
 
