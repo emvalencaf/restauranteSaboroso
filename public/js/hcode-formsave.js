@@ -8,7 +8,7 @@ HTMLFormElement.prototype.save = function(config){
       
       const formData = new FormData(form);
 
-      console.log(formData)
+      console.log(formData.get(email))
 
       fetch(form.action, {
         method: form.method,
@@ -16,7 +16,7 @@ HTMLFormElement.prototype.save = function(config){
       })
         .then(response => response.json())
         .then(json => {
-
+          
           if(json.error) {
             
             if(typeof config.failure !== 'function') return
@@ -29,7 +29,7 @@ HTMLFormElement.prototype.save = function(config){
           return config.sucess(json);
         })
         .catch(err => {
-  
+          
           if(typeof config.failure !== 'function') return
 
           return config.failure(err);
@@ -38,11 +38,6 @@ HTMLFormElement.prototype.save = function(config){
   
     });
 
-  //return new Promise((resolve, reject) =>{
-      
-
-
-  //})
 
 
 }

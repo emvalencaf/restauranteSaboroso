@@ -5,7 +5,9 @@ var users = require('../inc/users');
 var menus = require('../inc/menus.mysql');
 var reservations = require('../inc/reservations');
 var moment = require('moment');
-const contacts = require('../inc/contacts');
+var contacts = require('../inc/contacts');
+var emails = require('../inc/emails');
+
 
 moment.locale('pt-BR');
 
@@ -125,10 +127,28 @@ router.delete('/contacts/:id', function(req, res, next){
 
 router.get('/emails', function(req, res, next){
 
-    res.render('admin/emails', admin.getParams(req));
+    emails.getEmails()
+        .then(data => {
+
+            res.render('admin/emails', admin.getParams(req, {data}));
+
+        });
+
 
 });
+router.delete('/emails/:id', function(req, res, next){
 
+    emails.delete(req.params.id)
+        .then(results => {
+
+            res.send(results);
+        })
+        .catch(err => {
+            console.error(err);
+            res.send(err);
+        });
+
+});
 router.get('/menus', function(req, res, next){
 
     menus.getMenus()
