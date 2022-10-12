@@ -1,4 +1,5 @@
-const connection = require("./db.mysql")
+const connection = require("./db.mysql");
+const Pagination = require("./pagination");
 
 module.exports = {
     render(req, res, error, sucess){
@@ -14,8 +15,16 @@ module.exports = {
 
     },
 
-    getReservations(){
+    getReservations(page){
 
+        if(!page) page = 1;
+
+        const pag = new Pagination(`
+        SELECT SQL_CALC_FOUND_ROWS * FROM tb_reservations ORDER BY name LIMIT ?, ?
+        `);
+
+        return pag.getPage(page);
+/*
         return new Promise((resolve, reject) => {
 
             connection.query(`
@@ -29,7 +38,7 @@ module.exports = {
             });
 
 
-        });
+        });*/
     },
 
     save(fields){
