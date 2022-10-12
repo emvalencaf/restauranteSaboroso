@@ -38,8 +38,8 @@ class HcodeGrid{
         this.options = Object.assign({}, {
             formCreate: '#modal-create form',
             formUpdate: '#modal-update form',
-            btnUpdate: '.btn-update',
-            btnDelete: '.btn-delete',
+            btnUpdate: 'btn-update',
+            btnDelete: 'btn-delete',
             onUpdateLoad: (form, name, data) => {
 
                 const input = form.querySelector('[name='+ name + ']');
@@ -49,7 +49,7 @@ class HcodeGrid{
             }
         }, configs);
 
-        console.log(this.options)
+        this.rows = [...document.querySelectorAll('table tbody tr')]
 
         this.initForms();
         this.initBtns();
@@ -60,34 +60,31 @@ class HcodeGrid{
 
         this.formCreate = document.querySelector(this.options.formCreate);
 
-        this.formCreate.save()
-          .then(json => {
-      
-            this.fireEvent('afterFormCreated');
-      
-          })
-          .catch(err => {
-      
-            this.fireEvent('afterFormCreateError');
-            console.error(err);
-      
-          });
+        this.formCreate.save({
+            sucess: () => {
+                
+                this.fireEvent('afterFormCreated');
+            },
+            failure: (err) => {
+                
+                this.fireEvent('afterFormCreateError');
+            }
+        });
       
         this.formUpdate = document.querySelector(this.options.formUpdate);
       
-        this.formUpdate.save()
-          .then(json => {
-      
-            this.fireEvent('afterFormUpdated');
-      
-          })
-          .catch(err => {
-            
-            this.fireEvent('afterFormUpdateError');
-            console.error(err);
-      
-          });
-      
+        this.formUpdate.save({
+            sucess: () => {
+
+                this.fireEvent('afterFormUpdated');
+
+            },
+            failure: () => {
+
+                this.fireEvent('afterFormUpdateError');
+
+            }
+        });
 
     };
 
@@ -107,56 +104,70 @@ class HcodeGrid{
 
     }
 
+    btnUpdateClick(e){
+
+        this.fireEvent('beforeUpdateClick', [e]);
+
+        const data = this.getTrData(e);
+  
+        for(let name in data){
+          
+            this.options.onUpdateLoad(this.formUpdate, name, data);
+  
+        };
+  
+        this.fireEvent('afterUpdateClick', [e]);
+
+    }
+
+    btnDeleteClick(e){
+
+        this.fireEvent('beforeDeleteClick')
+        
+        const data = this.getTrData(e);
+
+
+        if(!confirm(eval('`' + this.options.deleteMsg + '`'))) return
+
+        fetch(eval('`' + this.options.deleteURL + '`'), {
+            method: 'DELETE'
+        })
+            .then(response => response.json())
+            .then(json => {
+                
+                this.fireEvent('afterDeleteClick');
+
+            });
+    
+    }
+
     initBtns(){
       
-      
-        const btnsDelete = [...document.querySelectorAll(this.options.btnDelete)];
-      
-        btnsDelete.forEach(btn => {
-      
-            btn.addEventListener('click', e => {
-                debugger
-                
-                this.fireEvent('beforeDeleteClick')
-        
-                const data = this.getTrData(e);
+        this.rows.forEach(row => {
 
+            [...row.querySelectorAll('.btn')].forEach(btn => {
 
-                if(!confirm(eval('`' + this.options.deleteMsg + '`'))) return
-      
-                fetch(eval('`' + this.options.deleteURL + '`'), {
-                    method: 'DELETE'
-                })
-                    .then(response => response.json())
-                    .then(json => {
-                        
-                        this.fireEvent('afterDeleteClick');
-      
-                    });
-      
+                btn.addEventListener('click', e => {
+
+                    if(e.target.classList.contains(this.options.btnUpdate)){
+
+                        this.btnUpdateClick(e);
+
+                    } else if(e.target.classList.contains(this.options.btnDelete)){
+
+                        this.btnDeleteClick(e);
+
+                    } else {
+
+                        this.fireEvent('buttonClick', [e.target, this.getTrData(e), e]);
+
+                    };
+
+                });
+
             });
-      
-        });
-      
-        const btns = [...document.querySelectorAll(this.options.btnUpdate)];
-        
-        btns.forEach(btn =>{
-      
-          btn.addEventListener('click', e => {
-            
-            this.fireEvent('beforeUpdateClick', [e]);
 
-            const data = this.getTrData(e);
-      
-            for(let name in data){
-              
-                this.options.onUpdateLoad(this.formUpdate, name, data);
-      
-            };
-      
-            this.fireEvent('afterUpdateClick', [e]);
-          });
-      
         });
+
     };
 };
