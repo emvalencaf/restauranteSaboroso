@@ -6,18 +6,27 @@ var logger = require('morgan');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var formidable = require('formidable');
-
+var http = require('http');
+var socket = require('socket.io');
 
 var { createClient } = require('redis')
 var redisClient = createClient({legacyMode: true})
 redisClient.connect().catch((err)=>console.error(err))
 
 
-var indexRouter = require('./routes/index');
-var adminRouter = require('./routes/admin');
 
 var app = express();
+var http = http.Server(app);
+var io = socket(http);
 
+io.on('connection', function(socket){
+  
+  console.log('Novousuário conectado!');
+  
+});
+
+var indexRouter = require('./routes/index')(io);
+var adminRouter = require('./routes/admin')(io);
 
 app.use(function(req, res, next){
 
@@ -80,4 +89,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+http.listen(3000, function(){
+  console.log('servidor em execução...');
+});
+
+//module.exports = app;
